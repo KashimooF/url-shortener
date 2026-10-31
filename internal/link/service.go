@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
+	"net/url"
 	"time"
 )
 
@@ -24,11 +25,17 @@ func NewService(storage Storage) *Service {
 	return &Service{storage: storage}
 }
 
-func (s *Service) Create(ctx context.Context, url string) (*Link, error) {
+func (s *Service) Create(ctx context.Context, rawURL string) (*Link, error) {
 
-	if url == "" {
+	if rawURL == "" {
 		return nil, fmt.Errorf("%w: empty", ErrInvalidURL)
 
+	}
+
+	u, err := url.ParseRequestURI(rawURL)
+
+	if err != nil || (u.Scheme != "http" && u.Scheme != "https") {
+		return nil, fmt.Errorf("%w: %s", ErrInvalidURL, rawURL)
 	}
 
 	for i := 0; i < maxAttempts; i++ {
@@ -41,7 +48,7 @@ func (s *Service) Create(ctx context.Context, url string) (*Link, error) {
 
 		l := &Link{
 			Code:      code,
-			URL:       url,
+			URL:       rawURL,
 			CreatedAt: time.Now().UTC(),
 			Clicks:    0,
 		}

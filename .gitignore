@@ -1,0 +1,22 @@
+# Бинарники
+/server
+/server.exe
+/bin/
+*.exe
+*.test
+
+# Покрытие
+*.out
+coverage.html
+
+# .env
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
